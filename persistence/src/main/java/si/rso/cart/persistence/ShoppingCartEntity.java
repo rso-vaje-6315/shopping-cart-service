@@ -3,7 +3,7 @@ package si.rso.cart.persistence;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "shopping-carts")
+@Table(name = "shopping-cart")
 @NamedQueries(value = {
         @NamedQuery(name = ShoppingCartEntity.FIND_BY_CUSTOMER, query = "SELECT s FROM ShoppingCartEntity s WHERE s.customerId = :customerId")
         , @NamedQuery(name = ShoppingCartEntity.FIND_ALL, query = "SELECT s FROM ShoppingCartEntity s")
