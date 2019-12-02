@@ -23,14 +23,6 @@ public class ShoppingCartEndpoint {
     private ShoppingCartService shoppingCartService;
 
     @GET
-    public Response getShoppingCarts() {
-        // TODO testni endpoint, tega se po moje ne bo rablo v praksi
-        List<ShoppingCart> shoppingCarts = shoppingCartService.getShoppingCarts();
-
-        return Response.ok(shoppingCarts).build();
-    }
-
-    @GET
     @Path("/me")
     public Response getShoppingCartsForCustomer() {
         String customerId = "9349cf54-1946-4915-be7e-7decb9090e8e"; // TODO get current logged user's id
