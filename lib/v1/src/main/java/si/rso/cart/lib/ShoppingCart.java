@@ -1,6 +1,6 @@
 package si.rso.cart.lib;
 
-public class ShoppingCart {
+public class ShoppingCart extends BaseType {
 
     private String customerId;
 

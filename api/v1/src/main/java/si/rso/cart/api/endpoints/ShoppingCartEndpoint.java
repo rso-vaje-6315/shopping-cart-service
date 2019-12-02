@@ -13,7 +13,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
-@Path("/")
+@Path("/shopping-carts/me")
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -24,7 +24,7 @@ public class ShoppingCartEndpoint {
 
     @GET
     public Response getShoppingCartsForCustomer() {
-        String customerId = "TODO"; // TODO get current logged user's id
+        String customerId = "9349cf54-1946-4915-be7e-7decb9090e8e"; // TODO get current logged user's id
         List<ShoppingCart> shoppingCarts = shoppingCartService.getShoppingCartsForCustomer(customerId);
 
         return Response.ok(shoppingCarts).build();

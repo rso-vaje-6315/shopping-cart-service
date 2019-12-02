@@ -7,6 +7,8 @@ public class ShoppingCartMapper {
 
     public static ShoppingCart fromEntity(ShoppingCartEntity entity) {
         ShoppingCart shoppingCart = new ShoppingCart();
+        shoppingCart.setId(entity.getId());
+        shoppingCart.setTimestamp(entity.getTimestamp());
         shoppingCart.setCustomerId(entity.getCustomerId());
         shoppingCart.setProductId(entity.getProductId());
         shoppingCart.setQuantity(entity.getQuantity());

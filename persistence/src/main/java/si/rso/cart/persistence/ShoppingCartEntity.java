@@ -5,7 +5,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "shopping-carts")
 @NamedQueries(value = {
-        @NamedQuery(name = ShoppingCartEntity.FIND_BY_CUSTOMER, query = "SELECT s FROM ShoppingCartEntity s WHERE s.customer_id = :customerId")
+        @NamedQuery(name = ShoppingCartEntity.FIND_BY_CUSTOMER, query = "SELECT s FROM ShoppingCartEntity s WHERE s.customerId = :customerId")
 })
 public class ShoppingCartEntity extends BaseEntity {
 
