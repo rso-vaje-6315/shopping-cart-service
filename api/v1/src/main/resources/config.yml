@@ -45,10 +45,10 @@ kumuluzee:
                "bearer-only": true,
                "auth-server-url": "https://keycloak.mjamsek.com/auth",
                "ssl-required": "external",
-               "resource": "shopping-carts-service",
+               "resource": "shopping-cart-service",
                "confidential-port": 0
              }'
       realm: rso
       auth-server-url: https://keycloak.mjamsek.com/auth
-      client-id: shopping-carts-service
+      client-id: shopping-cart-service
       client-secret: not_set
