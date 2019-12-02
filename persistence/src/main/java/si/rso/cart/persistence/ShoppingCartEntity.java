@@ -9,7 +9,7 @@ import javax.persistence.*;
 })
 public class ShoppingCartEntity extends BaseEntity {
 
-    public static final String FIND_BY_CUSTOMER = "SampleEntity.findByCustomer";
+    public static final String FIND_BY_CUSTOMER = "ShoppingCartEntity.findByCustomer";
 
     @Column(name = "customer_id")
     private String customerId;
