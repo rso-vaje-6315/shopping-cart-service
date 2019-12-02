@@ -7,4 +7,6 @@ import java.util.List;
 public interface ShoppingCartService {
 
     List<ShoppingCart> getShoppingCartsForCustomer(String customerId);
+
+    List<ShoppingCart> getShoppingCarts();
 }

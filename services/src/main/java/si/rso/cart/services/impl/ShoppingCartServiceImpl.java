@@ -20,9 +20,20 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     @Override
     public List<ShoppingCart> getShoppingCartsForCustomer(String customerId) {
+        // TODO ne dela, neka napaka je v query-ju
         TypedQuery<ShoppingCartEntity> query = em.createNamedQuery(ShoppingCartEntity.FIND_BY_CUSTOMER,
                 ShoppingCartEntity.class);
         query.setParameter("customerId", customerId);
+
+        return query.getResultStream()
+                .map(ShoppingCartMapper::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ShoppingCart> getShoppingCarts() {
+        TypedQuery<ShoppingCartEntity> query = em.createNamedQuery(ShoppingCartEntity.FIND_ALL,
+                ShoppingCartEntity.class);
 
         return query.getResultStream()
                 .map(ShoppingCartMapper::fromEntity)

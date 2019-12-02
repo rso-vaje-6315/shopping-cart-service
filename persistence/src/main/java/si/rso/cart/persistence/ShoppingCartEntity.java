@@ -6,10 +6,12 @@ import javax.persistence.*;
 @Table(name = "shopping-carts")
 @NamedQueries(value = {
         @NamedQuery(name = ShoppingCartEntity.FIND_BY_CUSTOMER, query = "SELECT s FROM ShoppingCartEntity s WHERE s.customerId = :customerId")
+        , @NamedQuery(name = ShoppingCartEntity.FIND_ALL, query = "SELECT s FROM ShoppingCartEntity s")
 })
 public class ShoppingCartEntity extends BaseEntity {
 
     public static final String FIND_BY_CUSTOMER = "ShoppingCartEntity.findByCustomer";
+    public static final String FIND_ALL = "ShoppingCartEntity.findAll";
 
     @Column(name = "customer_id")
     private String customerId;
