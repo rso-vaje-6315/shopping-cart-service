@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.eclipse.microprofile.faulttolerance.Retry;
+import org.eclipse.microprofile.faulttolerance.Timeout;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.representations.AccessToken;
@@ -55,6 +57,8 @@ public class ShoppingCartEndpoint {
 
     @GET
     @Path("/me")
+    @Timeout
+    @Retry
     @RolesAllowed({AuthRole.CUSTOMER})
     @Operation(description = "Customer retrieves their shopping cart.",
             summary = "Returns users' shopping cart.", tags = "shopping-cart",
@@ -69,12 +73,14 @@ public class ShoppingCartEndpoint {
             List<ShoppingCart> shoppingCarts = shoppingCartService.getShoppingCartsForCustomer(customerId);
             return Response.ok(shoppingCarts).build();
         } catch (Exception e) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(e).build();
         }
     }
 
     @PUT
     @Path("/me")
+    @Timeout
+    @Retry
     @RolesAllowed({AuthRole.CUSTOMER})
     @Operation(description = "Customer updates their shopping cart.",
             summary = "Update the shopping cart and returns users' updated shopping cart (all products).", tags = "shopping-cart",
@@ -93,12 +99,14 @@ public class ShoppingCartEndpoint {
 
             return Response.ok(shoppingCarts).build();
         } catch (Exception e) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(e).build();
         }
     }
 
     @DELETE
     @Path("/me")
+    @Timeout
+    @Retry
     @RolesAllowed({AuthRole.CUSTOMER})
     @Operation(description = "Customer removes a product from the shopping cart.",
             summary = "Removes a product from the shopping cart.", tags = "shopping-cart",
@@ -114,7 +122,7 @@ public class ShoppingCartEndpoint {
             ShoppingCart deletedCart = shoppingCartService.deleteShoppingCartForCustomer(shoppingCart);
             return Response.ok(deletedCart).build();
         } catch (Exception e) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(e).build();
         }
     }
 }
