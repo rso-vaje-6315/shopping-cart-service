@@ -15,4 +15,15 @@ public class ShoppingCartMapper {
 
         return shoppingCart;
     }
+
+    public static ShoppingCartEntity toEntity(ShoppingCart shoppingCart) {
+        ShoppingCartEntity entity = new ShoppingCartEntity();
+        entity.setId(shoppingCart.getId());
+        entity.setTimestamp(shoppingCart.getTimestamp());
+        entity.setCustomerId(shoppingCart.getCustomerId());
+        entity.setProductId(shoppingCart.getProductId());
+        entity.setQuantity(shoppingCart.getQuantity());
+
+        return entity;
+    }
 }

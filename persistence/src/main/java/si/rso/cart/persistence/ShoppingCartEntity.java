@@ -7,11 +7,13 @@ import javax.persistence.*;
 @NamedQueries(value = {
         @NamedQuery(name = ShoppingCartEntity.FIND_BY_CUSTOMER, query = "SELECT s FROM ShoppingCartEntity s WHERE s.customerId = :customerId")
         , @NamedQuery(name = ShoppingCartEntity.FIND_ALL, query = "SELECT s FROM ShoppingCartEntity s")
+        , @NamedQuery(name = ShoppingCartEntity.FIND_BY_CUSTOMER_AND_PRODUCT, query = "SELECT s FROM ShoppingCartEntity s WHERE s.customerId = :customerId AND s.productId = :productId")
 })
 public class ShoppingCartEntity extends BaseEntity {
 
     public static final String FIND_BY_CUSTOMER = "ShoppingCartEntity.findByCustomer";
     public static final String FIND_ALL = "ShoppingCartEntity.findAll";
+    public static final String FIND_BY_CUSTOMER_AND_PRODUCT = "ShoppingCartEntity.findByCustomerAndProduct";
 
     @Column(name = "customer_id")
     private String customerId;
