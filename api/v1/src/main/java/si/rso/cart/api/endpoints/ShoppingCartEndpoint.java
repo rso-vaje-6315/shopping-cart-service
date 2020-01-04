@@ -1,13 +1,13 @@
 package si.rso.cart.api.endpoints;
 
+import com.kumuluz.ee.logs.cdi.Log;
 import com.kumuluz.ee.security.annotations.Secure;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.eclipse.microprofile.faulttolerance.Retry;
-import org.eclipse.microprofile.faulttolerance.Timeout;
+import org.eclipse.microprofile.metrics.annotation.Counted;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.representations.AccessToken;
@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+@Log
 @Path("/shopping-cart")
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
@@ -57,8 +58,6 @@ public class ShoppingCartEndpoint {
 
     @GET
     @Path("/me")
-    @Timeout
-    @Retry
     @RolesAllowed({AuthRole.CUSTOMER})
     @Operation(description = "Customer retrieves their shopping cart.",
             summary = "Returns users' shopping cart.", tags = "shopping-cart",
@@ -79,8 +78,6 @@ public class ShoppingCartEndpoint {
 
     @PUT
     @Path("/me")
-    @Timeout
-    @Retry
     @RolesAllowed({AuthRole.CUSTOMER})
     @Operation(description = "Customer updates their shopping cart.",
             summary = "Update the shopping cart and returns users' updated shopping cart (all products).", tags = "shopping-cart",
@@ -104,9 +101,8 @@ public class ShoppingCartEndpoint {
     }
 
     @DELETE
+    @Counted(name = "remove-from-shopping-cart-count")
     @Path("/me")
-    @Timeout
-    @Retry
     @RolesAllowed({AuthRole.CUSTOMER})
     @Operation(description = "Customer removes a product from the shopping cart.",
             summary = "Removes a product from the shopping cart.", tags = "shopping-cart",

@@ -1,5 +1,7 @@
 package si.rso.cart.services.impl;
 
+import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
+import org.eclipse.microprofile.faulttolerance.Timeout;
 import si.rso.cart.lib.ShoppingCart;
 import si.rso.cart.mappers.ShoppingCartMapper;
 import si.rso.cart.persistence.ShoppingCartEntity;
@@ -20,6 +22,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @PersistenceContext(unitName = "main-jpa-unit")
     private EntityManager em;
 
+    @CircuitBreaker
+    @Timeout
     @Override
     public List<ShoppingCart> getShoppingCartsForCustomer(String customerId) {
         TypedQuery<ShoppingCartEntity> query = em.createNamedQuery(ShoppingCartEntity.FIND_BY_CUSTOMER,
@@ -39,6 +43,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         return Optional.ofNullable(query.getSingleResult());
     }
 
+    @CircuitBreaker
+    @Timeout
     @Override
     @Transactional
     public ShoppingCart updateShoppingCartForCustomer(ShoppingCart shoppingCart) {
@@ -54,6 +60,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         }
     }
 
+    @CircuitBreaker
+    @Timeout
     @Override
     @Transactional
     public ShoppingCart deleteShoppingCartForCustomer(ShoppingCart shoppingCart) {
