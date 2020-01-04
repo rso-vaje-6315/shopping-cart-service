@@ -39,6 +39,9 @@ kumuluzee:
   config:
     consul:
       agent: http://localhost:8500
+  discovery:
+    consul:
+      agent: http://localhost:8500
   health:
     servlet:
       mapping: /health/
@@ -71,7 +74,3 @@ kumuluzee:
                "resource": "shopping-cart-service",
                "confidential-port": 0
              }'
-      realm: rso
-      auth-server-url: https://keycloak.mjamsek.com/auth
-      client-id: shopping-cart-service
-      client-secret: not_set
