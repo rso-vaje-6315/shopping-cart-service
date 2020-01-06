@@ -39,6 +39,9 @@ kumuluzee:
   config:
     consul:
       agent: http://localhost:8500
+  discovery:
+    consul:
+      agent: http://localhost:8500
   health:
     servlet:
       mapping: /health/
@@ -56,10 +59,10 @@ kumuluzee:
       username: not_set
       password: not_set
       pool:
-        max-size: 20
+        max-size: 10
   metrics:
     web-instrumentation:
-      - name: customers-endpoint
+      - name: shopping-cart-endpoint
         url-pattern: /v1/shopping-cart/*
   security:
     keycloak:
@@ -71,7 +74,3 @@ kumuluzee:
                "resource": "shopping-cart-service",
                "confidential-port": 0
              }'
-      realm: rso
-      auth-server-url: https://keycloak.mjamsek.com/auth
-      client-id: shopping-cart-service
-      client-secret: not_set

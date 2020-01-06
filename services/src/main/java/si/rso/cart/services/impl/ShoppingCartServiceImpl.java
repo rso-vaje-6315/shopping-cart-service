@@ -8,9 +8,7 @@ import si.rso.cart.persistence.ShoppingCartEntity;
 import si.rso.cart.services.ShoppingCartService;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
@@ -40,7 +38,12 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         query.setParameter("customerId", shoppingCart.getCustomerId());
         query.setParameter("productId", shoppingCart.getProductId());
 
-        return Optional.ofNullable(query.getSingleResult());
+        try {
+            return Optional.ofNullable(query.getSingleResult());
+        } catch (NoResultException | NonUniqueResultException e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
     }
 
     @CircuitBreaker
@@ -49,14 +52,15 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Transactional
     public ShoppingCart updateShoppingCartForCustomer(ShoppingCart shoppingCart) {
         // TODO check stock (sets the highest possible quantity if not enough stock)
-
-        if (findByCustomerAndProduct(shoppingCart).isPresent()) {
-            ShoppingCartEntity cartFromDB = findByCustomerAndProduct(shoppingCart).get();
-            cartFromDB.setQuantity(shoppingCart.getQuantity());
-            return ShoppingCartMapper.fromEntity(em.merge(cartFromDB));
+        Optional<ShoppingCartEntity> cart = findByCustomerAndProduct(shoppingCart);
+        if (cart.isPresent()) {
+            ShoppingCartEntity entity = cart.get();
+            entity.setQuantity(shoppingCart.getQuantity());
+            return ShoppingCartMapper.fromEntity(entity);
         } else {
-            em.persist(ShoppingCartMapper.toEntity(shoppingCart));
-            return shoppingCart;
+            ShoppingCartEntity entity = ShoppingCartMapper.toEntity(shoppingCart);
+            em.persist(entity);
+            return ShoppingCartMapper.fromEntity(entity);
         }
     }
 
