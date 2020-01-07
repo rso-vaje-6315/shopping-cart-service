@@ -75,3 +75,5 @@ kumuluzee:
                "resource": "shopping-cart-service",
                "confidential-port": 0
              }'
+service-config:
+  maintenance: false
