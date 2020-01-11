@@ -57,7 +57,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         if (cart.isPresent()) {
             ShoppingCartEntity entity = cart.get();
             entity.setQuantity(shoppingCart.getQuantity());
-            em.flush();
+            em.merge(entity);
             return ShoppingCartMapper.fromEntity(entity);
         } else {
             ShoppingCartEntity entity = ShoppingCartMapper.toEntity(shoppingCart);
