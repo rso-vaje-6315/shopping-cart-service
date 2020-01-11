@@ -9,6 +9,6 @@ public interface ShoppingCartService {
     List<ShoppingCart> getShoppingCartsForCustomer(String customerId);
 
     ShoppingCart updateShoppingCartForCustomer(ShoppingCart shoppingCart);
-
-    ShoppingCart deleteShoppingCartForCustomer(ShoppingCart shoppingCart);
+    
+    void deleteShoppingCartForCustomer(ShoppingCart shoppingCart);
 }

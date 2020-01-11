@@ -6,6 +6,7 @@ import si.rso.cart.lib.ShoppingCart;
 import si.rso.cart.mappers.ShoppingCartMapper;
 import si.rso.cart.persistence.ShoppingCartEntity;
 import si.rso.cart.services.ShoppingCartService;
+import si.rso.rest.exceptions.NotFoundException;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.*;
@@ -56,6 +57,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         if (cart.isPresent()) {
             ShoppingCartEntity entity = cart.get();
             entity.setQuantity(shoppingCart.getQuantity());
+            em.flush();
             return ShoppingCartMapper.fromEntity(entity);
         } else {
             ShoppingCartEntity entity = ShoppingCartMapper.toEntity(shoppingCart);
@@ -68,9 +70,9 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Timeout
     @Override
     @Transactional
-    public ShoppingCart deleteShoppingCartForCustomer(ShoppingCart shoppingCart) {
-        ShoppingCartEntity cartFromDB = findByCustomerAndProduct(shoppingCart).orElseThrow();
+    public void deleteShoppingCartForCustomer(ShoppingCart shoppingCart) {
+        ShoppingCartEntity cartFromDB = findByCustomerAndProduct(shoppingCart)
+            .orElseThrow(() -> new NotFoundException(ShoppingCartEntity.class, shoppingCart.getProductId()));
         em.remove(cartFromDB);
-        return ShoppingCartMapper.fromEntity(cartFromDB);
     }
 }

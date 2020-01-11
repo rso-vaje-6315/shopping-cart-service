@@ -14,6 +14,7 @@ import org.keycloak.representations.AccessToken;
 import si.rso.cart.api.config.AuthRole;
 import si.rso.cart.lib.ShoppingCart;
 import si.rso.cart.services.ShoppingCartService;
+import si.rso.rest.exceptions.UnauthorizedException;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
@@ -34,91 +35,79 @@ import java.util.Optional;
 @Consumes(MediaType.APPLICATION_JSON)
 @Secure
 public class ShoppingCartEndpoint {
-
+    
     @Inject
     private ShoppingCartService shoppingCartService;
-
+    
     @Context
     SecurityContext securityContext;
-
+    
     private Optional<KeycloakSecurityContext> getKeycloakSecurityContext() {
         if (securityContext != null && securityContext.getUserPrincipal() instanceof KeycloakPrincipal) {
-            KeycloakPrincipal principal = ((KeycloakPrincipal) securityContext.getUserPrincipal());
+            KeycloakPrincipal<?> principal = ((KeycloakPrincipal<?>) securityContext.getUserPrincipal());
             return Optional.of(principal.getKeycloakSecurityContext());
         } else {
             return Optional.empty();
         }
     }
-
+    
     private Optional<String> getMyCustomerId() throws NoSuchElementException {
         KeycloakSecurityContext context = getKeycloakSecurityContext().orElseThrow();
         AccessToken token = context.getToken();
         return Optional.ofNullable(token.getSubject());
     }
-
+    
     @GET
     @Path("/me")
     @RolesAllowed({AuthRole.CUSTOMER})
     @Operation(description = "Customer retrieves their shopping cart.",
-            summary = "Returns users' shopping cart.", tags = "shopping-cart",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Returns products from the shopping cart.",
-                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = ShoppingCart.class))))
-            })
+        summary = "Returns users' shopping cart.", tags = "shopping-cart",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Returns products from the shopping cart.",
+                content = @Content(array = @ArraySchema(schema = @Schema(implementation = ShoppingCart.class))))
+        })
     public Response getShoppingCartsForCustomer() {
-        try {
-            String customerId = getMyCustomerId().orElseThrow();
-
-            List<ShoppingCart> shoppingCarts = shoppingCartService.getShoppingCartsForCustomer(customerId);
-            return Response.ok(shoppingCarts).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(e).build();
-        }
+        String customerId = getMyCustomerId().orElseThrow(() -> new UnauthorizedException("Only for logged in users!"));
+        
+        List<ShoppingCart> shoppingCarts = shoppingCartService.getShoppingCartsForCustomer(customerId);
+        return Response.ok(shoppingCarts).build();
     }
-
+    
     @PUT
     @Path("/me")
     @RolesAllowed({AuthRole.CUSTOMER})
     @Operation(description = "Customer updates their shopping cart.",
-            summary = "Update the shopping cart and returns users' updated shopping cart (all products).", tags = "shopping-cart",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Returns products from the shopping cart.",
-                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = ShoppingCart.class))))
-            })
+        summary = "Update the shopping cart and returns users' updated shopping cart (all products).", tags = "shopping-cart",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Returns products from the shopping cart.",
+                content = @Content(array = @ArraySchema(schema = @Schema(implementation = ShoppingCart.class))))
+        })
     public Response updateShoppingCartForCustomer(ShoppingCart shoppingCart) {
-        try {
-            String customerId = getMyCustomerId().orElseThrow();
-            shoppingCart.setCustomerId(customerId);
-
-            ShoppingCart updatedCart = shoppingCartService.updateShoppingCartForCustomer(shoppingCart);
-
-            List<ShoppingCart> shoppingCarts = shoppingCartService.getShoppingCartsForCustomer(customerId);
-
-            return Response.ok(shoppingCarts).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(e).build();
-        }
+        String customerId = getMyCustomerId().orElseThrow(() -> new UnauthorizedException("Only for logged in users!"));
+        shoppingCart.setCustomerId(customerId);
+        
+        shoppingCartService.updateShoppingCartForCustomer(shoppingCart);
+        
+        List<ShoppingCart> shoppingCarts = shoppingCartService.getShoppingCartsForCustomer(customerId);
+        
+        return Response.ok(shoppingCarts).build();
     }
-
+    
     @DELETE
     @Counted(name = "remove-from-shopping-cart-count")
     @Path("/me")
     @RolesAllowed({AuthRole.CUSTOMER})
     @Operation(description = "Customer removes a product from the shopping cart.",
-            summary = "Removes a product from the shopping cart.", tags = "shopping-cart",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Removes a product from the shopping cart.",
-                            content = @Content(schema = @Schema(implementation = ShoppingCart.class)))
-            })
+        summary = "Removes a product from the shopping cart.", tags = "shopping-cart",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Removes a product from the shopping cart.",
+                content = @Content(schema = @Schema(implementation = ShoppingCart.class)))
+        })
     public Response removeProductFromShoppingCartForCustomer(ShoppingCart shoppingCart) {
-        try {
-            String customerId = getMyCustomerId().orElseThrow();
-            shoppingCart.setCustomerId(customerId);
-
-            ShoppingCart deletedCart = shoppingCartService.deleteShoppingCartForCustomer(shoppingCart);
-            return Response.ok(deletedCart).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(e).build();
-        }
+        String customerId = getMyCustomerId().orElseThrow(() -> new UnauthorizedException("Only for logged in users!"));
+        shoppingCart.setCustomerId(customerId);
+        
+        shoppingCartService.deleteShoppingCartForCustomer(shoppingCart);
+        return Response.noContent().build();
     }
 }
