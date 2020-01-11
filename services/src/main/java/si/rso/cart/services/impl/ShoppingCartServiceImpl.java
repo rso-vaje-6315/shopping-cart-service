@@ -48,21 +48,28 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @CircuitBreaker
-    @Timeout
+    @Timeout(2000)
     @Override
-    @Transactional
     public ShoppingCart updateShoppingCartForCustomer(ShoppingCart shoppingCart) {
         // TODO check stock (sets the highest possible quantity if not enough stock)
-        Optional<ShoppingCartEntity> cart = findByCustomerAndProduct(shoppingCart);
-        if (cart.isPresent()) {
-            ShoppingCartEntity entity = cart.get();
-            entity.setQuantity(shoppingCart.getQuantity());
-            em.merge(entity);
+        try {
+            em.getTransaction().begin();
+            ShoppingCartEntity entity;
+            Optional<ShoppingCartEntity> cart = findByCustomerAndProduct(shoppingCart);
+            if (cart.isPresent()) {
+                entity = cart.get();
+                entity.setQuantity(shoppingCart.getQuantity());
+                em.merge(entity);
+            } else {
+                entity = ShoppingCartMapper.toEntity(shoppingCart);
+                em.persist(entity);
+            }
+            em.getTransaction().commit();
             return ShoppingCartMapper.fromEntity(entity);
-        } else {
-            ShoppingCartEntity entity = ShoppingCartMapper.toEntity(shoppingCart);
-            em.persist(entity);
-            return ShoppingCartMapper.fromEntity(entity);
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+            e.printStackTrace();
+            throw e;
         }
     }
 
