@@ -76,10 +76,16 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @CircuitBreaker
     @Timeout
     @Override
-    @Transactional
     public void deleteShoppingCartForCustomer(ShoppingCart shoppingCart) {
-        ShoppingCartEntity cartFromDB = findByCustomerAndProduct(shoppingCart)
-            .orElseThrow(() -> new NotFoundException(ShoppingCartEntity.class, shoppingCart.getProductId()));
-        em.remove(cartFromDB);
+        try {
+            em.getTransaction().begin();
+            ShoppingCartEntity cartFromDB = findByCustomerAndProduct(shoppingCart)
+                .orElseThrow(() -> new NotFoundException(ShoppingCartEntity.class, shoppingCart.getProductId()));
+            em.remove(cartFromDB);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+        }
+        
     }
 }
