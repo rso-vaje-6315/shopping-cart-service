@@ -1,5 +1,7 @@
 package si.rso.cart.services.impl;
 
+import com.kumuluz.ee.logs.LogManager;
+import com.kumuluz.ee.logs.Logger;
 import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
 import org.eclipse.microprofile.faulttolerance.Timeout;
 import si.rso.cart.lib.ShoppingCart;
@@ -17,6 +19,8 @@ import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class ShoppingCartServiceImpl implements ShoppingCartService {
+    
+    private static final Logger LOG = LogManager.getLogger(ShoppingCartServiceImpl.class.getSimpleName());
 
     @PersistenceContext(unitName = "main-jpa-unit")
     private EntityManager em;
@@ -68,6 +72,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             return ShoppingCartMapper.fromEntity(entity);
         } catch (Exception e) {
             em.getTransaction().rollback();
+            LOG.error(e.getMessage());
             e.printStackTrace();
             throw e;
         }
