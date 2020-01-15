@@ -72,9 +72,10 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             StockApi stockApi = RestClientBuilder.newBuilder()
                     .baseUri(URI.create(stockBaseUrl.get()))
                     .build(StockApi.class);
-            Long stockNumber = stockApi.getNumberOfAllProducts(shoppingCart.getProductId());
+            ShoppingCart temp = stockApi.getNumberOfAllProducts(shoppingCart.getProductId());
+            int stockNumber = temp.getQuantity();
             if (shoppingCart.getQuantity() > stockNumber) {
-                shoppingCart.setQuantity(stockNumber.intValue());
+                shoppingCart.setQuantity(stockNumber);
             }
 
             // ostalo
