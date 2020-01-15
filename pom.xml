@@ -150,11 +150,6 @@
                 <artifactId>rest-utils</artifactId>
                 <version>${rso-rest.version}</version>
             </dependency>
-            <dependency>
-                <groupId>si.rso.stock</groupId>
-                <artifactId>stock-service-lib-v1</artifactId>
-                <version>${rso-snapshots}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
