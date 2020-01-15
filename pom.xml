@@ -34,6 +34,7 @@
         <keycloak.version>7.0.0</keycloak.version>
 
         <rso-rest.version>1.3.0-SNAPSHOT</rso-rest.version>
+        <rso-snapshots>1.0.0-SNAPSHOT</rso-snapshots>
     </properties>
 
     <dependencyManagement>
@@ -148,6 +149,11 @@
                 <groupId>si.rso.rest</groupId>
                 <artifactId>rest-utils</artifactId>
                 <version>${rso-rest.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>si.rso.stock</groupId>
+                <artifactId>stock-service-lib-v1</artifactId>
+                <version>${rso-snapshots}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

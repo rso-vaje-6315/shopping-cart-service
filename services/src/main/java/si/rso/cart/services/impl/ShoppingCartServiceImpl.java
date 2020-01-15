@@ -1,29 +1,38 @@
 package si.rso.cart.services.impl;
 
+import com.kumuluz.ee.discovery.annotations.DiscoverService;
 import com.kumuluz.ee.logs.LogManager;
 import com.kumuluz.ee.logs.Logger;
 import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
 import org.eclipse.microprofile.faulttolerance.Timeout;
+import org.eclipse.microprofile.rest.client.RestClientBuilder;
 import si.rso.cart.lib.ShoppingCart;
 import si.rso.cart.mappers.ShoppingCartMapper;
 import si.rso.cart.persistence.ShoppingCartEntity;
+import si.rso.cart.restclient.StockApi;
 import si.rso.cart.services.ShoppingCartService;
 import si.rso.rest.exceptions.NotFoundException;
+import si.rso.rest.exceptions.RestException;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.persistence.*;
-import javax.transaction.Transactional;
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class ShoppingCartServiceImpl implements ShoppingCartService {
-    
+
     private static final Logger LOG = LogManager.getLogger(ShoppingCartServiceImpl.class.getSimpleName());
 
     @PersistenceContext(unitName = "main-jpa-unit")
     private EntityManager em;
+
+    @Inject
+    @DiscoverService("stock-service")
+    private Optional<String> stockBaseUrl;
 
     @CircuitBreaker
     @Timeout
@@ -55,8 +64,20 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Timeout(2000)
     @Override
     public ShoppingCart updateShoppingCartForCustomer(ShoppingCart shoppingCart) {
-        // TODO check stock (sets the highest possible quantity if not enough stock)
+        if (stockBaseUrl.isEmpty()) {
+            throw new RestException("Cannot find the url for the stock-service");
+        }
         try {
+            // preveri in popravi quantity glede na stock
+            StockApi stockApi = RestClientBuilder.newBuilder()
+                    .baseUri(URI.create(stockBaseUrl.get()))
+                    .build(StockApi.class);
+            Long stockNumber = stockApi.getNumberOfAllProducts(shoppingCart.getProductId());
+            if (shoppingCart.getQuantity() > stockNumber) {
+                shoppingCart.setQuantity(stockNumber.intValue());
+            }
+
+            // ostalo
             em.getTransaction().begin();
             ShoppingCartEntity entity;
             Optional<ShoppingCartEntity> cart = findByCustomerAndProduct(shoppingCart);

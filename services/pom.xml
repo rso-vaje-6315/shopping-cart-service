@@ -72,6 +72,10 @@
             <groupId>si.rso.rest</groupId>
             <artifactId>rest-utils</artifactId>
         </dependency>
+        <dependency>
+            <groupId>si.rso.stock</groupId>
+            <artifactId>stock-service-lib-v1</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
