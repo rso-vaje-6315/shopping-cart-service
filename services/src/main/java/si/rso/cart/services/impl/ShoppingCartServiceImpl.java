@@ -77,6 +77,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             if (shoppingCart.getQuantity() > stockNumber) {
                 shoppingCart.setQuantity(stockNumber);
             }
+            System.err.println("Tu sem");
 
             // ostalo
             em.getTransaction().begin();
