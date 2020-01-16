@@ -6,6 +6,7 @@ import com.kumuluz.ee.logs.Logger;
 import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
 import org.eclipse.microprofile.faulttolerance.Timeout;
 import org.eclipse.microprofile.rest.client.RestClientBuilder;
+import si.rso.cart.config.ServiceConfig;
 import si.rso.cart.lib.ShoppingCart;
 import si.rso.cart.mappers.ShoppingCartMapper;
 import si.rso.cart.persistence.ShoppingCartEntity;
@@ -33,6 +34,9 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Inject
     @DiscoverService("stock-service")
     private Optional<String> stockBaseUrl;
+    
+    @Inject
+    private ServiceConfig serviceConfig;
 
     @CircuitBreaker
     @Timeout
@@ -70,7 +74,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         try {
             // preveri in popravi quantity glede na stock
             StockApi stockApi = RestClientBuilder.newBuilder()
-                    .baseUri(URI.create(stockBaseUrl.get()))
+                    .baseUri(URI.create(serviceConfig.getStockUrl()))
                     .build(StockApi.class);
             ShoppingCart temp = stockApi.getNumberOfAllProducts(shoppingCart.getProductId());
             int stockNumber = temp.getQuantity();

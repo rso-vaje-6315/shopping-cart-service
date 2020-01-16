@@ -11,7 +11,18 @@ public class ServiceConfig {
 
     @ConfigValue("maintenance")
     private boolean maintenance;
-
+    
+    @ConfigValue("stock-url")
+    private String stockUrl;
+    
+    public String getStockUrl() {
+        return stockUrl;
+    }
+    
+    public void setStockUrl(String stockUrl) {
+        this.stockUrl = stockUrl;
+    }
+    
     public boolean isMaintenance() {
         return maintenance;
     }
