@@ -10,5 +10,5 @@ public interface ShoppingCartService {
 
     ShoppingCart updateShoppingCartForCustomer(ShoppingCart shoppingCart);
     
-    void deleteShoppingCartForCustomer(ShoppingCart shoppingCart);
+    ShoppingCart deleteShoppingCartForCustomer(ShoppingCart shoppingCart);
 }

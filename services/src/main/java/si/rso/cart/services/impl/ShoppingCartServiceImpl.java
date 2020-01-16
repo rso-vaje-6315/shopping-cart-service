@@ -94,25 +94,24 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             return ShoppingCartMapper.fromEntity(entity);
         } catch (Exception e) {
             em.getTransaction().rollback();
-            LOG.error(e.getMessage());
-            e.printStackTrace();
-            throw e;
+            throw new RestException(e.toString());
         }
     }
 
     @CircuitBreaker
     @Timeout
     @Override
-    public void deleteShoppingCartForCustomer(ShoppingCart shoppingCart) {
+    public ShoppingCart deleteShoppingCartForCustomer(ShoppingCart shoppingCart) {
         try {
             em.getTransaction().begin();
             ShoppingCartEntity cartFromDB = findByCustomerAndProduct(shoppingCart)
-                .orElseThrow(() -> new NotFoundException(ShoppingCartEntity.class, shoppingCart.getProductId()));
+                    .orElseThrow(() -> new NotFoundException(ShoppingCartEntity.class, shoppingCart.getProductId()));
             em.remove(cartFromDB);
             em.getTransaction().commit();
+            return ShoppingCartMapper.fromEntity(cartFromDB);
         } catch (Exception e) {
             em.getTransaction().rollback();
+            throw new RestException(e.toString());
         }
-        
     }
 }
